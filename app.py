@@ -54,7 +54,7 @@ def web_search(query: str, num_results: int = 5) -> str:
     try:
         url = f"https://html.duckduckgo.com/html/?q={requests.utils.quote(query)}"
         headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=5)
+        response = requests.get(url, headers=headers, timeout=30)
 
         if response.status_code != 200:
             return f"Search failed with status {response.status_code}"
@@ -121,7 +121,7 @@ def get_platform_session(session_id: str):
     try:
         response = requests.get(
             f"{PLATFORM_URL}/api/sessions/{session_id}?experiment_id={os.environ.get('EXPERIMENT_ID').strip()}",
-            timeout=5
+            timeout=30
         )
         if response.status_code == 404:
             print(f"  ↳ Status 404 (new session) - using defaults")
@@ -172,7 +172,7 @@ def post_platform_session(session_id: str, data: dict):
         response = requests.post(
             f"{PLATFORM_URL}/api/sessions/{session_id}?experiment_id={os.environ.get('EXPERIMENT_ID').strip()}",
             json=data,
-            timeout=5
+            timeout=30
         )
         response.raise_for_status()
         print(f"  ↳ Status {response.status_code} - saved to Platform\n")
@@ -461,7 +461,7 @@ def end_session():
         response = requests.post(
             f"{PLATFORM_URL}/api/sessions/{session_id}/end?experiment_id={os.environ.get('EXPERIMENT_ID').strip()}",
             json={"session_id": session_id, "ended_at": datetime.utcnow().isoformat()},
-            timeout=5
+            timeout=30
         )
         response.raise_for_status()
         print(f"  ↳ Status {response.status_code} - Platform notified\n")
